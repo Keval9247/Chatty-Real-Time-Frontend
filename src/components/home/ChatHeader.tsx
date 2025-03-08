@@ -43,20 +43,20 @@ const ChatHeader = () => {
     const remoteVideoRef = useRef<HTMLVideoElement | null>(null);
 
     const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
-    const { socket } = useSocketStore();
+    const { socket }: any = useSocketStore();
 
     useEffect(() => {
         if (!socket.connected) {
             socket.connect();
         }
 
-        socket.on("ice-candidate", async (candidate) => {
+        socket.on("ice-candidate", async (candidate: any) => {
             if (peerConnectionRef.current) {
                 await peerConnectionRef.current.addIceCandidate(new RTCIceCandidate(candidate));
             }
         });
 
-        socket.on("offer", async (offer) => {
+        socket.on("offer", async (offer: any) => {
             if (!peerConnectionRef.current) {
                 createPeerConnection();
             }
@@ -67,7 +67,7 @@ const ChatHeader = () => {
             socket.emit("answer", answer);
         });
 
-        socket.on("answer", async (answer) => {
+        socket.on("answer", async (answer: any) => {
             await peerConnectionRef.current?.setRemoteDescription(new RTCSessionDescription(answer));
         });
 
