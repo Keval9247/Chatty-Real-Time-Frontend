@@ -6,7 +6,7 @@ export const axiosInstance = axios.create({
     headers: {
         Authorization: `Bearer ${token}`,
     },
-    timeout: 5000,
+    timeout: 15000,
     validateStatus: (status) => status >= 200 && status < 300,
     withCredentials: true,
 })
