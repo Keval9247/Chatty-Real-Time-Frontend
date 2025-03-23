@@ -19,8 +19,8 @@ export default defineConfig({
   //       ws: true,
   //     },
   //   },
-  // },
-  build: {
-    outDir: 'build'
-  }
+  // // },
+  // build: {
+  //   outDir: 'build'
+  // }
 });
