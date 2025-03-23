@@ -16,6 +16,7 @@ import Audio from "./lib/utils/Audio"
 
 function App() {
   const { authUser, checkAuth, isCheckingAuth }: any = useAuthStore();
+  console.log("🚀🚀 Your selected text is => authUser: ", authUser);
   const { theme }: any = useThemeStore();
   useEffect(() => {
     checkAuth();
