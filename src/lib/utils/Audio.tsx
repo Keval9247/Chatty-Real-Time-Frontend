@@ -2,19 +2,18 @@ import React, { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 
 const socket: any = io(`${import.meta.env.VITE_API_BASE_URL}`);
-console.log("🚀🚀 Your selected text is => socket: ", socket);
 
 const AudioCall: React.FC = () => {
     const [me, setMe] = useState<string>("");
-    console.log("🚀🚀 Your selected text is => me: ", me);
+    // console.log("🚀🚀 Your selected text is => me: ", me);
     const [callAccepted, setCallAccepted] = useState<boolean>(false);
     const [users, setUsers] = useState<{ [key: string]: string }>({});
-    console.log("🚀🚀 Your selected text is => users: ", users);
+    // console.log("🚀🚀 Your selected text is => users: ", users);
     const [caller, setCaller] = useState<string>("");
     const [receivingCall, setReceivingCall] = useState<boolean>(false);
     const [callerSignal, setCallerSignal] = useState<RTCSessionDescriptionInit | null>(null);
     const [stream, setStream] = useState<MediaStream | null>(null);
-    console.log("🚀🚀 Your selected text is => stream: ", stream);
+    // console.log("🚀🚀 Your selected text is => stream: ", stream);
     const myAudio = useRef<HTMLAudioElement>(null);
     const userAudio = useRef<HTMLAudioElement>(null);
     const peerRef = useRef<RTCPeerConnection | null>(null);
@@ -26,7 +25,7 @@ const AudioCall: React.FC = () => {
 
         navigator.mediaDevices.getUserMedia({ audio: true })
             .then((currentStream) => {
-                console.log("🚀🚀 Your selected text is => currentStream: ", currentStream);
+                // console.log("🚀🚀 Your selected text is => currentStream: ", currentStream);
                 setStream(currentStream);
                 if (myAudio.current) {
                     myAudio.current.srcObject = currentStream;
@@ -59,7 +58,7 @@ const AudioCall: React.FC = () => {
 
 
     const callUser = (id: string) => {
-        console.log("🚀🚀 Your selected text is => id: ", id);
+        // console.log("🚀🚀 Your selected text is => id: ", id);
         if (!stream) return;
 
         peerRef.current = new RTCPeerConnection();

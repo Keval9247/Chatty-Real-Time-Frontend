@@ -1,38 +1,55 @@
 import { useState, useEffect } from "react";
-import { Camera, Mail, User } from "lucide-react";
+import { Camera, Mail, User, X } from "lucide-react";
 import { useAuthStore } from "../../store/useAuthStore";
 import { formatintoDDMMYYY } from "../../lib/utils/dateFormater";
 
 const ProfilePage = () => {
-  const { authUser, isUpdatingProfile, updateProfile }: any = useAuthStore();
-  const [selectedImg, setSelectedImg] = useState<string | any>(null);
+  const { authUser, isUpdatingProfile, updateProfile } = useAuthStore();
+  const [selectedImg, setSelectedImg] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [previewImg, setPreviewImg] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
   const profilePicUrl = authUser?.user?.profilePic
     ? `${import.meta.env.VITE_API_BASE_URL}/${authUser?.user?.profilePic}`
     : selectedImg || "/images/userBlueShadow.jpeg";
 
-  // Handle image upload and preview
-  const handleImageUpload = async (e: any) => {
+  const handleFileSelect = (e: any) => {
     const file = e.target.files[0];
     if (!file) return;
-
-    const formData = new FormData();
-    formData.append("profile", file);
-
-    // Call the updateProfile function to send the image to the backend
-    updateProfile(formData);
-
-    // Update the preview of the image immediately in the UI
-    const convertedImage = URL.createObjectURL(file);
-    setSelectedImg(convertedImage);
+    setPreviewImg(URL.createObjectURL(file));
+    setIsModalOpen(true);
   };
 
-  // Ensure the profile picture is updated from the backend response
+  const handleImageUpload = async () => {
+    if (!previewImg) return;
+
+    setLoading(true);
+    const formData = new FormData();
+    const file = document.querySelector<any>('#avatar-upload').files[0];
+    formData.append("profile", file);
+
+    try {
+      await updateProfile(formData);
+      setSelectedImg(previewImg);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Error updating profile:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setPreviewImg(null);
+  };
+
   useEffect(() => {
     if (!authUser?.user?.profilePic && selectedImg) {
-      setSelectedImg(null);  // Reset if there's no profile picture after upload
+      setSelectedImg(null);
     }
-  }, [authUser?.user?.profilePic, selectedImg]);
+  }, [authUser?.user?.profilePic]);
 
   return (
     <div className="h-screen pt-20">
@@ -43,10 +60,8 @@ const ProfilePage = () => {
             <p className="mt-2">Your profile information</p>
           </div>
 
-          {/* Avatar upload section */}
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
-              {/* Image rendering */}
               <img
                 src={profilePicUrl}
                 alt="Profile"
@@ -68,41 +83,39 @@ const ProfilePage = () => {
                   id="avatar-upload"
                   className="hidden"
                   accept="image/*"
-                  onChange={handleImageUpload}
+                  onChange={handleFileSelect}
                   disabled={isUpdatingProfile}
                 />
               </label>
             </div>
             <p className="text-sm text-zinc-400">
-              {isUpdatingProfile ? "Uploading..." : "Click the camera icon to update your photo"}
+              Click the camera icon to update your photo
             </p>
           </div>
 
-          {/* Profile information */}
           <div className="space-y-6">
             <div className="space-y-2.5">
               <div className="text-sm text-zinc-400 flex items-center gap-2">
                 <User className="w-4 h-4" />
                 Full Name
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.user?.username}</p>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.user?.username || authUser?.username}</p>
             </div>
             <div className="space-y-2.5">
               <div className="text-sm text-zinc-400 flex items-center gap-2">
                 <Mail className="w-4 h-4" />
                 Email Address
               </div>
-              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.user?.email}</p>
+              <p className="px-4 py-2.5 bg-base-200 rounded-lg border">{authUser?.user?.email || authUser?.email}</p>
             </div>
           </div>
 
-          {/* Account information */}
           <div className="mt-6 bg-base-300 rounded-xl p-6">
             <h2 className="text-lg font-medium mb-4">Account Information</h2>
             <div className="space-y-3 text-sm">
               <div className="flex items-center justify-between py-2 border-b border-zinc-700">
                 <span>Member Since</span>
-                <span>{formatintoDDMMYYY((authUser?.user?.createdAt)).split("T")[0]}</span>
+                <span>{formatintoDDMMYYY((authUser?.user?.createdAt || authUser?.createdAt)).split("T")[0]}</span>
               </div>
               <div className="flex items-center justify-between py-2">
                 <span>Account Status</span>
@@ -115,6 +128,42 @@ const ProfilePage = () => {
           </div>
         </div>
       </div>
+
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-base-300 rounded-xl p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Upload Profile Photo</h2>
+              <button onClick={closeModal}>
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+            {previewImg && (
+              <img
+                src={previewImg}
+                alt="Preview"
+                className="w-40 h-40 rounded-full object-cover mx-auto mb-4"
+              />
+            )}
+            <div className="flex justify-end gap-4">
+              <button
+                className="btn btn-neutral"
+                onClick={closeModal}
+                disabled={loading}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary"
+                onClick={handleImageUpload}
+                disabled={loading}
+              >
+                {loading ? "Uploading..." : "Upload"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

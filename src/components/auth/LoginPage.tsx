@@ -14,8 +14,7 @@ const LoginPage = () => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    const response = await login(formData);
-    console.log("🚀🚀 Your selected text is => response: ", response);
+    await login(formData);
   };
 
   return (

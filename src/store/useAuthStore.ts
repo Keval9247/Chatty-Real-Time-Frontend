@@ -86,7 +86,6 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
             const response = await axiosInstance.post<{ message: string; user: AuthUser; token: String | any }>('/auth/login', data,
                 { withCredentials: true }
             );
-            console.log("🚀🚀 Your selected text is => response: ", response);
             localStorage.setItem("token", response?.data?.token);
             set({ authUser: response.data.user });
             toast.success(response.data.message);
