@@ -11,8 +11,11 @@ function Sidebar() {
     const [showOnlineOnly, setShowOnlineOnly] = useState(false);
 
     useEffect(() => {
-        getUsers();
-    }, [getUsers]);
+        const fetchUsers = async () => {
+            await getUsers();
+        };
+        fetchUsers();
+    }, []);
 
     // Filter users based on online status
     const filteredUsers = showOnlineOnly
@@ -21,7 +24,7 @@ function Sidebar() {
 
     // Handle user profile image
     const handleUserImage = (userprofilepic: any) => {
-        if (userprofilepic?.includes("uploads/updatedImages")) {
+        if (userprofilepic?.includes("updatedImages")) {
             return `${import.meta.env.VITE_API_BASE_URL}/${userprofilepic}`;
         }
         return "/images/avatar.png";

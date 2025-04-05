@@ -44,7 +44,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
         set({ isUsersLoading: true });
         try {
             const res = await axiosInstance.get<{ data: User[] }>("/messages/side-user-list");
-            set({ users: res.data });
+            set({ users: res?.data });
         } catch (error: any) {
             toast.error(error.response?.data?.message || "An error occurred");
         } finally {

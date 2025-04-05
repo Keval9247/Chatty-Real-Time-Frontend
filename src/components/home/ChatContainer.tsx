@@ -46,7 +46,7 @@ const ChatContainer = () => {
   }
 
   const handleUserImage = (userprofilepic: string) => {
-    if (userprofilepic?.includes("uploads/updatedImages")) {
+    if (userprofilepic?.includes("updatedImages")) {
       return `${import.meta.env.VITE_API_BASE_URL}/${userprofilepic}`;
     } else {
       return "/images/avatar.png";

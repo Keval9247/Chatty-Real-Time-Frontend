@@ -42,7 +42,7 @@ interface AuthStore {
     disconnectSocket: () => void;
 }
 
-export const useAuthStore = create<AuthStore>((set, get) => ({
+export const useAuthStore = create<AuthStore>((set:any, get:any): any => ({
     authUser: null,
     isSigningUp: false,
     isLoggedIn: false,
@@ -144,8 +144,8 @@ export const useAuthStore = create<AuthStore>((set, get) => ({
 
         set({ socket })
 
-        socket.on("connect_error", (err) => console.error("Socket connection error:", err));
-        socket.on("newMessage", (message) => console.log("Message received:", message));
+        socket.on("connect_error", (err: any) => console.error("Socket connection error:", err));
+        socket.on("newMessage", (message: any) => console.log("Message received:", message));
 
 
         socket.on("getOnlineUsers", (usersIds: any) => {
